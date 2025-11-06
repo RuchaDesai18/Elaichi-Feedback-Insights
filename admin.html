@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Elaichi • Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --gold: #c19a6b;
+      --gold-light: #e8c99e;
+      --charcoal: #0d0b09;
+      --dark: #1a1612;
+      --card-bg: rgba(20, 18, 16, 0.85);
+      --border: rgba(193, 154, 107, 0.2);
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--charcoal), var(--dark));
+      color: #e8e1d1;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      font-size: 2.2rem;
+      color: var(--gold);
+    }
+
+    .logo h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 2.4rem;
+      background: linear-gradient(to right, #e8e1d1, var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(30, 28, 25, 0.6);
+      padding: 0.6rem 1.2rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.4rem;
+      text-align: center;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin: 0.5rem 0;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #a89a85;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .reservations {
+      background: var(--card-bg);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+
+    .table-header {
+      display: grid;
+      grid-template-columns: 1.2fr 0.7fr 1fr 0.7fr 1fr 0.8fr;
+      padding: 1.2rem 1.5rem;
+      background: rgba(30, 28, 25, 0.7);
+      font-weight: 600;
+      color: var(--gold-light);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .reservation-row {
+      display: grid;
+      grid-template-columns: 1.2fr 0.7fr 1fr 0.7fr 1fr 0.8fr;
+      padding: 1.1rem 1.5rem;
+      border-bottom: 1px solid rgba(193, 154, 107, 0.08);
+      transition: background 0.3s;
+    }
+
+    .reservation-row:hover {
+      background: rgba(35, 32, 28, 0.4);
+    }
+
+    .reservation-row:last-child {
+      border-bottom: none;
+    }
+
+    .status {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .status.confirmed { background: rgba(76, 175, 80, 0.2); color: #81c784; }
+    .status.seated { background: rgba(255, 193, 7, 0.2); color: #ffcc00; }
+    .status.completed { background: rgba(33, 150, 243, 0.2); color: #64b5f6; }
+    .status.noshow { background: rgba(244, 67, 54, 0.2); color: #f44336; }
+
+    .amount.paid { color: #81c784; }
+    .amount.pending { color: #ffcc00; }
+    .amount.partial { color: #64b5f6; }
+
+    #loading {
+      text-align: center;
+      padding: 3rem;
+      color: var(--gold);
+      font-size: 1.2rem;
+    }
+
+    #error {
+      text-align: center;
+      padding: 2rem;
+      color: #f44336;
+      background: rgba(244, 67, 54, 0.1);
+      border-radius: 12px;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: #a89a85;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .table-header, .reservation-row {
+        grid-template-columns: 1fr;
+      }
+      .table-header { display: none; }
+      .reservation-row {
+        flex-direction: column;
+        gap: 0.6rem;
+        padding: 1.2rem;
+      }
+      .reservation-row > div {
+        display: flex;
+        justify-content: space-between;
+      }
+      .reservation-row > div strong { font-weight: 600; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <i class="fas fa-crown logo-icon"></i>
+        <h1>Elaichi Admin</h1>
+      </div>
+      <div class="user">
+        <i class="fas fa-user-shield"></i>
+        <span>Manager Access</span>
+      </div>
+    </header>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value" id="totalCount">—</div>
+        <div class="stat-label">Today’s Bookings</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="revenue">—</div>
+        <div class="stat-label">Expected Revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="seatedCount">—</div>
+        <div class="stat-label">Currently Seated</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="pendingCount">—</div>
+        <div class="stat-label">Pending Payments</div>
+      </div>
+    </div>
+
+    <div class="reservations">
+      <div class="table-header">
+        <div>Guest</div>
+        <div>Table</div>
+        <div>Time</div>
+        <div>Guests</div>
+        <div>Status</div>
+        <div>Amount</div>
+      </div>
+      <div id="loading">
+        <i class="fas fa-spinner fa-spin"></i> Loading live bookings...
+      </div>
+      <div id="error"></div>
+      <div id="bookingsBody"></div>
+    </div>
+
+    <footer>
+      <p>Live data from confirmed bookings only • Updated in real-time</p>
+    </footer>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // ✅ STEP 1: REPLACE WITH YOUR FIREBASE CONFIG
+    const firebaseConfig = {
+      apiKey: "AIzaSyCwsOGcWKQNJ-ELtHFjWM55ivGhJgseApE",
+      authDomain: "elaichi-bookings.firebaseapp.com",
+      projectId: "elaichi-bookings",
+      storageBucket: "elaichi-bookings.appspot.com",
+      messagingSenderId: "123456789012",
+      appId: "1:123456789012:web:abcdef1234567890"
+    };
+
+    // Initialize Firebase
+    try {
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      console.log("✅ Firebase connected");
+    } catch (e) {
+      if (!firebase.apps.length) {
+        document.getElementById('loading').textContent = "❌ Firebase not configured";
+        document.getElementById('error').innerHTML = `Please add your Firebase config in the script.<br>See instructions: <a href="#" onclick="alert('1. Go to Firebase Console → Project Settings → Web App\\n2. Copy config into firebaseConfig above')">?</a>`;
+        document.getElementById('error').style.display = 'block';
+      }
+    }
+
+    // DOM elements
+    const loadingEl = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const bodyEl = document.getElementById('bookingsBody');
+    const totalCountEl = document.getElementById('totalCount');
+    const revenueEl = document.getElementById('revenue');
+    const seatedCountEl = document.getElementById('seatedCount');
+    const pendingCountEl = document.getElementById('pendingCount');
+
+    // Helper: Format date/time
+    function formatDateTime(date) {
+      if (!date) return '—';
+      const d = date.toDate ? date.toDate() : new Date(date);
+      return d.toLocaleTimeString('en-IN', {
+        hour12: true,
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function formatDate(date) {
+      if (!date) return '—';
+      const d = date.toDate ? date.toDate() : new Date(date);
+      return d.toLocaleDateString('en-IN', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short'
+      });
+    }
+
+    // Listen for real-time bookings
+    if (firebase.apps.length > 0) {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+
+      db.collection('reservations')
+        .where('createdAt', '>=', todayStart)
+        .orderBy('dateTime', 'desc')
+        .onSnapshot(snapshot => {
+          const bookings = [];
+          let totalRevenue = 0;
+          let seated = 0;
+          let pending = 0;
+
+          snapshot.forEach(doc => {
+            bookings.push({ id: doc.id, ...doc.data() });
+          });
+
+          // Clear UI
+          bodyEl.innerHTML = '';
+          loadingEl.style.display = 'none';
+
+          if (bookings.length === 0) {
+            bodyEl.innerHTML = `<div style="padding:2rem;text-align:center;color:#a89a85">No bookings today yet.</div>`;
+          } else {
+            bookings.forEach(b => {
+              if (b.amount) totalRevenue += b.amount;
+              if (b.status === 'seated') seated++;
+              if (b.status === 'confirmed' || b.status === 'noshow') pending++;
+
+              const row = document.createElement('div');
+              row.className = 'reservation-row';
+
+              row.innerHTML = `
+                <div>
+                  <strong>${b.customerName || '—'}</strong><br>
+                  <small>${b.email || '—'}</small>
+                </div>
+                <div>T${b.table || '—'}</div>
+                <div>${formatDate(b.dateTime)}<br>${formatDateTime(b.dateTime)}</div>
+                <div>${b.guests || '—'}</div>
+                <div><span class="status ${b.status || 'confirmed'}">${b.status || '—'}</span></div>
+                <div class="amount ${b.amountStatus || 'pending'}">
+                  ₹${b.amount ? b.amount.toLocaleString() : '—'}
+                  ${b.amountStatus ? `<br><small>(${b.amountStatus})</small>` : ''}
+                </div>
+              `;
+              bodyEl.appendChild(row);
+            });
+          }
+
+          // Update stats
+          totalCountEl.textContent = bookings.length;
+          revenueEl.textContent = `₹${totalRevenue.toLocaleString()}`;
+          seatedCountEl.textContent = seated;
+          pendingCountEl.textContent = pending;
+
+        }, err => {
+          console.error("Firestore error:", err);
+          loadingEl.style.display = 'none';
+          errorEl.textContent = `❌ Failed to load bookings: ${err.message}`;
+          errorEl.style.display = 'block';
+        });
+    }
+  </script>
+</body>
+</html>
