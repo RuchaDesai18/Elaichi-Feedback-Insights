@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>   
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Elaichi • Admin Dashboard</title>
@@ -268,19 +270,20 @@
       appId: "1:123456789012:web:abcdef1234567890"
     };
 
-    // Initialize Firebase
-    try {
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
-      console.log("✅ Firebase connected");
-    } catch (e) {
-      if (!firebase.apps.length) {
-        document.getElementById('loading').textContent = "❌ Firebase not configured";
-        document.getElementById('error').innerHTML = `Please add your Firebase config in the script.<br>See instructions: <a href="#" onclick="alert('1. Go to Firebase Console → Project Settings → Web App\\n2. Copy config into firebaseConfig above')">?</a>`;
-        document.getElementById('error').style.display = 'block';
-      }
-    }
-
+   
+ // Initialize Firebase
+let db;
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore(); // <-- Define db here
+  console.log("✅ Firebase connected");
+} catch (e) {
+  if (!firebase.apps.length) {
+    document.getElementById('loading').textContent = "❌ Firebase not configured";
+    document.getElementById('error').innerHTML = `Please add your Firebase config in the script.<br>See instructions: <a href="#" onclick="alert('1. Go to Firebase Console → Project Settings → Web App\\n2. Copy config into firebaseConfig above')">?</a>`;
+    document.getElementById('error').style.display = 'block';
+  }
+}
     // DOM elements
     const loadingEl = document.getElementById('loading');
     const errorEl = document.getElementById('error');
@@ -377,4 +380,18 @@
     }
   </script>
 </body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 </html>
